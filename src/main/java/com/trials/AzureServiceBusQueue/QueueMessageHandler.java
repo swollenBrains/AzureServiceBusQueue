@@ -15,23 +15,27 @@ public class QueueMessageHandler {
     public void processMessage(ServiceBusReceivedMessageContext serviceBusReceivedMessageContext) {
         try {
             ServiceBusReceivedMessage message = serviceBusReceivedMessageContext.getMessage();
-            LOGGER.info("apple Processing message (lock: {}). Sequence: {}, DeliveryCount: {}, Session: {}, Contents: {}",
-                    message.getLockToken(), message.getSequenceNumber(), message.getDeliveryCount(), message.getMessageId(),
-                    message.getBody());
-//            if (message.getSequenceNumber() % 2 == 0) {
-//                throw new RuntimeException("Dummy exception for sequence : " + message.getSequenceNumber() + ", message: " + message.getBody());
-//            }
-            try {
-                Thread.sleep(30_000);
-            } catch (InterruptedException e) {
-                LOGGER.error("Error processing msg : {}", message.getBody(), e);
-            }
-            LOGGER.info("apple Processed message. Sequence: {}, Session: {}, Contents: {}", message.getSequenceNumber(),
-                    message.getMessageId(), message.getBody());
+            processMessage(message);
             serviceBusReceivedMessageContext.complete();
         } catch(Throwable throwable) {
             serviceBusReceivedMessageContext.abandon();
         }
+    }
+
+    public void processMessage(ServiceBusReceivedMessage message) {
+        LOGGER.info("apple Processing message (lock: {}). Sequence: {}, DeliveryCount: {}, Session: {}, Contents: {}",
+                message.getLockToken(), message.getSequenceNumber(), message.getDeliveryCount(), message.getMessageId(),
+                message.getBody());
+//            if (message.getSequenceNumber() % 2 == 0) {
+//                throw new RuntimeException("Dummy exception for sequence : " + message.getSequenceNumber() + ", message: " + message.getBody());
+//            }
+        try {
+            Thread.sleep(180_000);
+        } catch (InterruptedException e) {
+            LOGGER.error("Error processing msg : {}", message.getBody(), e);
+        }
+        LOGGER.info("apple Processed message. Sequence: {}, Session: {}, Contents: {}", message.getSequenceNumber(),
+                message.getMessageId(), message.getBody());
     }
 
     public void processError(ServiceBusErrorContext context) {

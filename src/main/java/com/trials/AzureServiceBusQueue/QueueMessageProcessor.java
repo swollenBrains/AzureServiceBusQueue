@@ -1,13 +1,8 @@
 package com.trials.AzureServiceBusQueue;
 
-import com.azure.core.amqp.AmqpRetryMode;
 import com.azure.core.amqp.AmqpRetryOptions;
-import com.azure.core.amqp.ProxyOptions;
-import com.azure.core.util.Configuration;
 import com.azure.messaging.servicebus.ServiceBusClientBuilder;
 import com.azure.messaging.servicebus.ServiceBusProcessorClient;
-import com.azure.messaging.servicebus.ServiceBusProcessorClientProvider;
-import com.azure.messaging.servicebus.implementation.models.ServiceBusProcessorClientOptions;
 import com.azure.messaging.servicebus.models.ServiceBusReceiveMode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

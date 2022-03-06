@@ -15,18 +15,19 @@ import java.util.Date;
 @RestController
 public class QueueController {
 
-//    @Value("azure.servicebus.queue.connectionString")
     private final String connectionString;
     private final String queueName;
     private final QueueMessageProcessor queueMessageProcessor;
+    private final QueueMessageReceiver queueMessageReceiver;
 
     @Autowired
     public QueueController(@Value("${aazure.servicebus.queue.connectionString}") String connectionString,
                            @Value("${aazure.servicebus.queue.name}") String queueName,
-                           QueueMessageProcessor queueMessageProcessor) {
+                           QueueMessageProcessor queueMessageProcessor, QueueMessageReceiver queueMessageReceiver) {
         this.connectionString = connectionString;
         this.queueName = queueName;
         this.queueMessageProcessor = queueMessageProcessor;
+        this.queueMessageReceiver = queueMessageReceiver;
     }
 
     @GetMapping("/send/{count}")
@@ -41,11 +42,8 @@ public class QueueController {
 
         ServiceBusMessageBatch messageBatch = senderClient.createMessageBatch();
         for(int i =0; i<count; i++) {
-            // send one message to the queue
             String messageBody = i + " : Message sent at " + identifier;
             messageBatch.tryAddMessage(new ServiceBusMessage(messageBody));
-//            senderClient.sendMessage(new ServiceBusMessage(messageBody));
-//            System.out.println("Sent a single message : " + messageBody + " to the queue: " + queueName);
         }
         senderClient.sendMessages(messageBatch);
     }
@@ -60,5 +58,16 @@ public class QueueController {
     public void stopMessageProcessing() {
         queueMessageProcessor.stopProcessor();
     }
+
+    @GetMapping("/messageReceiver/start")
+    public void startMessageReceiving() {
+        queueMessageReceiver.startReceivingMessages();
+    }
+
+    @GetMapping("/messageReceiver/stop")
+    public void stopMessageReceiving() {
+        queueMessageReceiver.stopReceivingMessages();
+    }
+
 
 }
